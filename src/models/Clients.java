@@ -49,7 +49,7 @@ public class Clients {
 
 	@Override
 	public String toString() {
-		return "\n Nombre: " + nombre + ", Apellidos: " + apellidos + ", Edad: " + edad + ", Provincia: " + provincia;
+		return "Nombre: " + nombre + ", Apellidos: " + apellidos + ", Edad: " + edad + ", Provincia: " + provincia;
 	}
 	
 	

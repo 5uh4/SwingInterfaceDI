@@ -39,6 +39,6 @@ public class Products {
 
 	@Override
 	public String toString() {
-		return "\n Nombre:" + nombre + ", Precio Unitario: " + precioUnitario + ", Perecedero: " + perecedero;
+		return "Nombre: " + nombre + ", Precio Unitario: " + precioUnitario + ", Perecedero: " + perecedero;
 	}
 }

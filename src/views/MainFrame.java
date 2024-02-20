@@ -1,41 +1,45 @@
 package views;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.JComboBox;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
 import models.Clients;
+import models.Facturas;
 import models.Products;
 
 public class MainFrame {
 
 	private JFrame frame;
 	private JTextArea textAreaClientes;
-	private JMenuBar menuBar;
-	private JMenu MenuClientes;
 	private JMenuItem altaCliente;
-	private JMenuItem bajaCliente;
-	private JMenu MenuProductos;
-	private JMenuItem altaProductos;
-	private JMenuItem listarProductos;
-	private JTextArea areaLista;
+	private JButton btnClientes;
+	private JTextPane textPane;
+	private JButton btnUser;
+	private JButton btnProductos;
+	private JButton btnFacturas;
 	private ArrayList<Clients> clientes;
 	private ArrayList<Products> productos;
-	private JComboBox<Clients> comboClientes;
+	private ArrayList<Facturas> facturas;
 
 	/**
 	 * Launch the application.
@@ -58,9 +62,6 @@ public class MainFrame {
 	 */
 	public MainFrame() {
 		initialize();
-		crearClientesProd();
-		setComponents();
-		setBehaviours();
 	}
 
 	/**
@@ -68,159 +69,180 @@ public class MainFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 557, 344);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frame.setSize(1000, 600);
+		frame.setLocationRelativeTo(null);
+		frame.setTitle("Gestion de Clientes");
+		frame.getContentPane().setLayout(new BorderLayout(0, 0));
+		setComponents();
+		setBehaviours();
+		crearClientesProdFact();
 		frame.setVisible(true);
-
 	}
 
 	private void setComponents() {
+		JPanel topPanel = new JPanel();
+		topPanel.setBackground(SystemColor.textHighlight);
+		frame.getContentPane().add(topPanel, BorderLayout.NORTH);
+		topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		textAreaClientes = new JTextArea();
-		textAreaClientes.setBounds(10, 49, 523, 248);
-		textAreaClientes.setVisible(true);
-		frame.getContentPane().add(textAreaClientes);
+		ImageIcon imgLogo = new ImageIcon(System.getProperty("user.dir") + "/assets/picassoLogo.png");
+		JLabel lblLogoImg = new JLabel(imgLogo);
+		topPanel.add(lblLogoImg);
 
-		menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 543, 22);
-		frame.getContentPane().add(menuBar);
+		JLabel lblPicasso = new JLabel("I.E.S. PABLO PICASSO ");
+		topPanel.add(lblPicasso);
 
-		MenuClientes = new JMenu("Menu de Clientes");
-		MenuClientes.setHorizontalAlignment(SwingConstants.LEFT);
-		menuBar.add(MenuClientes);
+		JPanel leftPanel = new JPanel();
+		leftPanel.setBackground(new Color(0, 128, 128));
+		frame.getContentPane().add(leftPanel, BorderLayout.WEST);
+		GridBagLayout gbl_leftPanel = new GridBagLayout();
+		gbl_leftPanel.columnWidths = new int[] { 191, 0 };
+		gbl_leftPanel.rowHeights = new int[] { 98, 80, 92, 106, 0 };
+		gbl_leftPanel.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gbl_leftPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		leftPanel.setLayout(gbl_leftPanel);
 
-		altaCliente = new JMenuItem("Alta cliente");
-		MenuClientes.add(altaCliente);
+		ImageIcon imgClientes = new ImageIcon(System.getProperty("user.dir") + "/assets/clientes.png");
+		btnClientes = new JButton("Clientes");
+		btnClientes.setIcon(imgClientes);
+		btnClientes.setIconTextGap(5);
+		btnClientes.setBackground(Color.BLUE);
+		btnClientes.setForeground(Color.WHITE);
+		GridBagConstraints gbc_btnClientes = new GridBagConstraints();
+		gbc_btnClientes.fill = GridBagConstraints.BOTH;
+		gbc_btnClientes.insets = new Insets(0, 0, 5, 0);
+		gbc_btnClientes.gridx = 0;
+		gbc_btnClientes.gridy = 0;
+		leftPanel.add(btnClientes, gbc_btnClientes);
 
-		bajaCliente = new JMenuItem("Baja Cliente");
-		MenuClientes.add(bajaCliente);
+		ImageIcon imgProductos = new ImageIcon(System.getProperty("user.dir") + "/assets/productos.png");
+		btnProductos = new JButton("Productos");
+		btnProductos.setIcon(imgProductos);
+		btnProductos.setIconTextGap(5);
+		btnProductos.setForeground(Color.WHITE);
+		btnProductos.setBackground(Color.BLUE);
+		GridBagConstraints gbc_btnProductos = new GridBagConstraints();
+		gbc_btnProductos.fill = GridBagConstraints.BOTH;
+		gbc_btnProductos.insets = new Insets(0, 0, 5, 0);
+		gbc_btnProductos.gridx = 0;
+		gbc_btnProductos.gridy = 1;
+		leftPanel.add(btnProductos, gbc_btnProductos);
 
-		MenuProductos = new JMenu("Menu de Productos");
-		MenuProductos.setHorizontalAlignment(SwingConstants.LEFT);
-		menuBar.add(MenuProductos);
+		btnFacturas = new JButton("Facturas");
+		ImageIcon imgFacturas = new ImageIcon(System.getProperty("user.dir") + "/assets/facturas.jpg");
+		btnFacturas.setIcon(imgFacturas);
+		btnFacturas.setIconTextGap(5);
+		btnFacturas.setForeground(Color.WHITE);
+		btnFacturas.setBackground(Color.BLUE);
+		GridBagConstraints gbc_btnFacturas = new GridBagConstraints();
+		gbc_btnFacturas.fill = GridBagConstraints.BOTH;
+		gbc_btnFacturas.insets = new Insets(0, 0, 5, 0);
+		gbc_btnFacturas.gridx = 0;
+		gbc_btnFacturas.gridy = 2;
+		leftPanel.add(btnFacturas, gbc_btnFacturas);
 
-		altaProductos = new JMenuItem("Alta productos");
-		MenuProductos.add(altaProductos);
+		btnUser = new JButton("Usuario");
+		ImageIcon imgUser = new ImageIcon(System.getProperty("user.dir") + "/assets/user-removebg-preview.png");
+		btnUser.setIcon(imgUser);
+		btnUser.setIconTextGap(10);
+		btnUser.setVerticalTextPosition(SwingConstants.BOTTOM);
+//		JLabel lblUser = new JLabel(imgUser);
+//		btnUser.add(lblUser);
+		btnUser.setForeground(Color.WHITE);
+		btnUser.setBackground(Color.BLUE);
+		GridBagConstraints gbc_btnUser = new GridBagConstraints();
+		gbc_btnUser.fill = GridBagConstraints.BOTH;
+		gbc_btnUser.gridx = 0;
+		gbc_btnUser.gridy = 3;
+		leftPanel.add(btnUser, gbc_btnUser);
 
-		listarProductos = new JMenuItem("Lista de Productos");
-		MenuProductos.add(listarProductos);
-		textAreaClientes.setText(clientes.toString());
+		textPane = new JTextPane();
+		textPane.setBackground(new Color(0, 206, 209));
+		frame.getContentPane().add(textPane, BorderLayout.CENTER);
+
+		JLabel lblSuhail = new JLabel("Suhail Matrouch Mohamed");
+		lblSuhail.setHorizontalAlignment(SwingConstants.CENTER);
+		frame.getContentPane().add(lblSuhail, BorderLayout.SOUTH);
 	}
 
 	private void setBehaviours() {
 
-		altaCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				displayAlta();
-			}
-
-			private void displayAlta() {
-				String[] provincias = { "Malaga", "Madrid", "Cadiz", "Barcelona", "Valencia" };
-				JComboBox<String> comboProvincia = new JComboBox<>(provincias);
-				JTextField nombreCliente = new JTextField("");
-				JTextField apellidoCliente = new JTextField("");
-				JTextField edadCliente = new JTextField("");
-				JPanel panel = new JPanel(new GridLayout(0, 1));
-				panel.add(new JLabel("Nombre del Cliente:"));
-				panel.add(nombreCliente);
-				panel.add(new JLabel("Apellido del cliente:"));
-				panel.add(apellidoCliente);
-				panel.add(new JLabel("Edad del cliente"));
-				panel.add(edadCliente);
-				panel.add(new JLabel("Provincia del cliente: "));
-				panel.add(comboProvincia);
-				int result = JOptionPane.showConfirmDialog(altaCliente, panel, "Alta Cliente",
-						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-				if (result == JOptionPane.OK_OPTION) {
-					Clients clienteNuevo = new Clients(nombreCliente.getText(), apellidoCliente.getText(),
-							Integer.parseInt(edadCliente.getText()), comboProvincia.getSelectedItem().toString());
-					clientes.add(clienteNuevo);
-					textAreaClientes.setText(clientes.toString());
-				} else {
-					JOptionPane.showMessageDialog(altaCliente, "No se ha creado el cliente.");
-				}
-			}
-		});
-
-		bajaCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				displayBaja();
-			}
-
-			private void displayBaja() {
-				comboClientes = new JComboBox<>();
-				JPanel panel = new JPanel(new GridLayout(0, 1));
-				panel.add(new JLabel("Elegir cliente que borrar"));
-				for (Clients cliente : clientes) {
-					comboClientes.addItem(cliente);
-				}
-				panel.add(comboClientes);
-				int result = JOptionPane.showConfirmDialog(bajaCliente, panel, "Baja cliente",
-						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-				if (result == JOptionPane.OK_OPTION) {
-					Clients selectedCliente = (Clients) comboClientes.getSelectedItem();
-					clientes.remove(selectedCliente);
-					textAreaClientes.setText(clientes.toString());
-				} else {
-					JOptionPane.showMessageDialog(bajaCliente, "No se ha dado de baja ningun cliente");
-				}
-			}
-		});
-
-		altaProductos.addActionListener(new ActionListener() {
-
+		btnFacturas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayAltaProd();
+				showFacturas();
 			}
 
-			private void displayAltaProd() {
-				String[] perecedero = { "Verdadero", "Falso" };
-				JComboBox<String> comboPerecedero = new JComboBox<>(perecedero);
-				JTextField nombreProd = new JTextField("");
-				JTextField precioUnitario = new JTextField("");
-				JPanel panel = new JPanel(new GridLayout(0, 1));
-				panel.add(new JLabel("Nombre del producto:"));
-				panel.add(nombreProd);
-				panel.add(new JLabel("Precio del producto"));
-				panel.add(precioUnitario);
-				panel.add(new JLabel("Es perecedero: "));
-				panel.add(comboPerecedero);
-				int result = JOptionPane.showConfirmDialog(altaCliente, panel, "Alta Cliente",
-						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-				if (result == JOptionPane.OK_OPTION) {
-					if(comboPerecedero.getSelectedItem() == "Verdadero") {
-						Products productoNuevo = new Products(nombreProd.getText(),
-								Double.parseDouble(precioUnitario.getText()), true);
-						productos.add(productoNuevo);
-					} else {
-						Products productoNuevo = new Products(nombreProd.getText(),
-								Double.parseDouble(precioUnitario.getText()), false);
-						productos.add(productoNuevo);						
-					}
-				} else {
-					JOptionPane.showMessageDialog(altaCliente, "No se ha creado el producto.");
+			private void showFacturas() {
+				StringBuilder sb = new StringBuilder("");
+				for (Facturas fr : facturas) {
+					sb.append(fr.toString()).append("\n");
 				}
+				textPane.setText(sb.toString());
 			}
 		});
 
-		listarProductos.addActionListener(new ActionListener() {
+		btnProductos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayListaProd();
+				showProductos();
 			}
 
-			private void displayListaProd() {
-				areaLista = new JTextArea();
-				areaLista.setText(productos.toString());
-				JPanel panel = new JPanel(new GridLayout(0, 1));
-				panel.add(areaLista);
-				JOptionPane.showMessageDialog(frame, panel, "Lista de Productos", JOptionPane.PLAIN_MESSAGE);
+			private void showProductos() {
+				StringBuilder sb = new StringBuilder("");
+				for (Products pr : productos) {
+					sb.append(pr.toString()).append("\n");
+				}
+				textPane.setText(sb.toString());
 			}
+		});
+
+		btnClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				displayAlta();
+				showClientes();
+			}
+
+			private void showClientes() {
+				StringBuilder sb = new StringBuilder();
+				for (Clients cl : clientes) {
+					sb.append(cl.toString()).append("\n");
+				}
+				textPane.setText(sb.toString());
+
+			};
+
+//			private void displayAlta() {
+//				String[] provincias = { "Malaga", "Madrid", "Cadiz", "Barcelona", "Valencia" };
+//				JComboBox<String> comboProvincia = new JComboBox<>(provincias);
+//				JTextField nombreCliente = new JTextField("");
+//				JTextField apellidoCliente = new JTextField("");
+//				JTextField edadCliente = new JTextField("");
+//				JPanel panel = new JPanel(new GridLayout(0, 1));
+//				panel.add(new JLabel("Nombre del Cliente:"));
+//				panel.add(nombreCliente);
+//				panel.add(new JLabel("Apellido del cliente:"));
+//				panel.add(apellidoCliente);
+//				panel.add(new JLabel("Edad del cliente"));
+//				panel.add(edadCliente);
+//				panel.add(new JLabel("Provincia del cliente: "));
+//				panel.add(comboProvincia);
+//				int result = JOptionPane.showConfirmDialog(altaCliente, panel, "Alta Cliente",
+//						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+//				if (result == JOptionPane.OK_OPTION) {
+//					Clients clienteNuevo = new Clients(nombreCliente.getText(), apellidoCliente.getText(),
+//							Integer.parseInt(edadCliente.getText()), comboProvincia.getSelectedItem().toString());
+//					clientes.add(clienteNuevo);
+//					textAreaClientes.setText(clientes.toString());
+//				} else {
+//					JOptionPane.showMessageDialog(altaCliente, "No se ha creado el cliente.");
+//				}
+//			}
+
 		});
 
 	}
 
-	private void crearClientesProd() {
+	private void crearClientesProdFact() {
 		clientes = new ArrayList<Clients>();
 		Clients client1 = new Clients("Manolo", "Bombacho", 25, "Málaga");
 		Clients client2 = new Clients("Jose", "Garcia", 42, "Madrid");
@@ -229,6 +251,19 @@ public class MainFrame {
 
 		productos = new ArrayList<Products>();
 		Products producto1 = new Products("Cyberpunk 2077", 59.99, false);
+		Products producto2 = new Products("Suicide Squad - Kill the Justice League", 79.99, false);
+		Products producto3 = new Products("League Of Legends", 0.0, false);
 		productos.add(producto1);
+		productos.add(producto2);
+
+		ArrayList<Products> productos2 = new ArrayList<>();
+		productos2.add(producto1);
+		productos2.add(producto3);
+
+		facturas = new ArrayList<Facturas>();
+		Facturas fac1 = new Facturas("02", client2, productos);
+		Facturas fac2 = new Facturas("04", client1, productos2);
+		facturas.add(fac1);
+		facturas.add(fac2);
 	}
 }
